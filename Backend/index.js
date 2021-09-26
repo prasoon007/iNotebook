@@ -2,8 +2,10 @@ const express = require('express'),
     app = express(),
     connectToMongo = require('./db');
 
+//connecting to mango using db.js file
 connectToMongo();
 
+//used to convert req.body (json) to js objects
 app.use(express.json());
 
 //routes inclusion
