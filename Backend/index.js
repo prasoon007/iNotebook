@@ -14,6 +14,6 @@ app.use('/api/notes', require('./routes/notes.js'))
 
 
 //starting server
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log('Devil Arrived!');
 })
