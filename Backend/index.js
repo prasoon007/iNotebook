@@ -1,9 +1,11 @@
 const express = require('express'),
     app = express(),
-    connectToMongo = require('./db');
+    connectToMongo = require('./db'),
+    cors = require('cors')
 
 //connecting to mango using db.js file
 connectToMongo();
+app.use(cors())
 
 //used to convert req.body (json) to js objects
 app.use(express.json());
