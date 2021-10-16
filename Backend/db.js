@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var mongoDB = 'mongodb://127.0.0.1/my_database';
+var mongoDB = 'mongodb://127.0.0.1/iNotebook';
 
 connectToMongo = () => {
     mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
