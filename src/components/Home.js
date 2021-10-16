@@ -3,13 +3,13 @@ import AddNote from './AddNote';
 import Notes from './Notes';
 
 
-function Home() {
+function Home(props) {
     return (
         <>
             <div className="container my-3" style={{ width: '80%' }}>
-                <AddNote />
+                <AddNote updateAlert={props.updateAlert}/>
                 <h1>Your Notes</h1>
-                <Notes />
+                <Notes updateAlert={props.updateAlert}/>
             </div>
         </>
     )

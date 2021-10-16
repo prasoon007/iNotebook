@@ -13,9 +13,10 @@ router.post('/createuser', [
     body('email', 'enter a valid email').isEmail(), //check using express=validator
     body('password', 'Minimum 5 characters required').isLength({ min: 5 })], //check using express=validator
     async (req, res) => {
+        let success = false;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() }); //return error + json
+            return res.status(400).json({ success, errors: errors.array() }); //return error + json
         }
         try {
             let salt = await bcrypt.genSalt(10); //generates salt 
@@ -34,7 +35,8 @@ router.post('/createuser', [
             }
             //auth token is generated using data and secret string
             const authToken = jwt.sign(data, process.env.JWT_SECRET);
-            res.json({ authToken });//here using es6 authtoken is being send
+            success = true;
+            res.json({success ,authToken});//here using es6 authtoken is being send
         }
         catch (error) {
             res.status(500).send('some error occured,' + error.message);
@@ -46,18 +48,19 @@ router.post('/login', [
     body('email', 'enter a valid email').isEmail(),
     body('password', 'password is empty').not().isEmpty()
 ], async (req, res) => {
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ success, errors: errors.array() });
     }
     const { email, password } = req.body; //destructuring email and pass from req.body
     try {
         // finding user from req.body.email from database
         let user = await User.findOne({ email });
-        if (!user) return res.status(400).send('No credentials found');
+        if (!user) return res.status(400).send({success, error: 'Invalid Credentials'});
         //after finding user, we are verifying req.body.password(hash) from password hash from database
         let passCheck = await bcrypt.compare(password, user.password);
-        if (!passCheck) return res.status(400).send('No credentials found');
+        if (!passCheck) return res.status(400).json({success, error: 'Invalid Credentials'});
         //setting up jwt using user id 
         const data = {
             user: {
@@ -65,9 +68,10 @@ router.post('/login', [
             }
         }
         let authToken = jwt.sign(data, process.env.JWT_SECRET);
-        res.json({authToken});
+        success = true;
+        res.json({success, authToken});
     } catch (error) {
-        res.status(500).send('Internal Server Error');
+        res.status(500).json('Internal Server Error');
     }
 })
  

@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom';
 import NoteContext from '../components/context/notes/NoteContext';
-// import EditNote from './EditNote';
 import NotesItem from './NotesItem';
 
 
-function Notes() {
+function Notes(props) {
+    let history = useHistory()
     const context = useContext(NoteContext);
     const { notes, getAllNotes, editNote } = context;
     const [note, setNotes] = useState({ id: '', etitle: "", edescription: "", etag: "default" });
     useEffect(() => {
-        getAllNotes();
-        // eslint-disable-next-line
+        if(localStorage.getItem('token')){
+            getAllNotes();
+            // eslint-disable-next-line
+        } else history.push('/login');
     }, [])
     const ref = useRef('');
     const updateNotes = (currentNote) => {
@@ -20,6 +23,7 @@ function Notes() {
     const onClickHandle = (e) => {
         e.preventDefault();
         editNote(note.id, note.etitle, note.edescription, note.etag);
+        props.updateAlert('Note updated', 'success');
     };
     const onChange = (e) => {
         setNotes({ ...note, [e.target.name]: e.target.value })
@@ -62,7 +66,7 @@ function Notes() {
             <div className="row">
                 {notes.length === 0 ? <div className="container">No notes to display</div> : notes.map((note) => {
                     return <div className="col-md-3" key={note._id}>
-                        <NotesItem note={note} updateNotes={updateNotes} />
+                        <NotesItem note={note} updateNotes={updateNotes} updateAlert={props.updateAlert}/>
                     </div>
                 })}
             </div>
